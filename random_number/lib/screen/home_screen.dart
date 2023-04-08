@@ -36,13 +36,28 @@ class HomeScreen extends StatelessWidget {
               ),
               Expanded(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Text('123'),
-                    Text('456'),
-                    Text('789'),
-                  ],
-                ),
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      123,
+                      456,
+                      789,
+                    ]
+                        .map(
+                          (x) => Row(
+                            children: x
+                                .toString()
+                                .split('')
+                                .map(
+                                  (e) => Image.asset(
+                                    'asset/image/$e.png',
+                                    height: 70,
+                                    width: 50,
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        )
+                        .toList()),
               ),
               SizedBox(
                 width: double.infinity, // 양끝까지 넒히기
