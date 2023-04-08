@@ -42,11 +42,24 @@ class _BottomPart extends StatelessWidget {
   }
 }
 
-class _TopPart extends StatelessWidget {
+class _TopPart extends StatefulWidget {
   const _TopPart();
 
   @override
+  State<_TopPart> createState() => _TopPartState();
+}
+
+class _TopPartState extends State<_TopPart> {
+  DateTime selectedDate = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
+
+  @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
+
     return Expanded(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -60,8 +73,8 @@ class _TopPart extends StatelessWidget {
             ),
           ),
           Column(
-            children: const [
-              Text(
+            children: [
+              const Text(
                 '우리 처음 만난날',
                 style: TextStyle(
                   color: Colors.white,
@@ -70,8 +83,8 @@ class _TopPart extends StatelessWidget {
                 ),
               ),
               Text(
-                '2022.01.20',
-                style: TextStyle(
+                '${selectedDate.year}.${selectedDate.month}.${selectedDate.day}',
+                style: const TextStyle(
                   color: Colors.white,
                   fontFamily: 'sunflower',
                   fontSize: 20,
@@ -94,7 +107,17 @@ class _TopPart extends StatelessWidget {
                       height: 300,
                       child: CupertinoDatePicker(
                         mode: CupertinoDatePickerMode.date,
-                        onDateTimeChanged: (DateTime date) {},
+                        initialDateTime: selectedDate,
+                        maximumDate: DateTime(
+                          DateTime.now().year,
+                          DateTime.now().month,
+                          DateTime.now().day,
+                        ),
+                        onDateTimeChanged: (DateTime date) {
+                          setState(() {
+                            selectedDate = date;
+                          });
+                        },
                       ),
                     ),
                   );
@@ -104,9 +127,13 @@ class _TopPart extends StatelessWidget {
             icon: const Icon(Icons.favorite),
             color: Colors.red,
           ),
-          const Text(
-            'D+1',
-            style: TextStyle(
+          Text(
+            'D+${DateTime(
+                  now.year,
+                  now.month,
+                  now.day,
+                ).difference(selectedDate).inDays + 1}',
+            style: const TextStyle(
                 color: Colors.white,
                 fontFamily: 'sunflower',
                 fontSize: 50,
