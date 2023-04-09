@@ -12,6 +12,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int maxnumber = 100;
   List<int> randomNumbers = [
     123,
     456,
@@ -28,7 +29,9 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const _Header(),
+              _Header(
+                onPressed: onSettingsPop,
+              ),
               _Body(randomNumbers: randomNumbers),
               _Footer(
                 onPressed: onRandomNumberGenerator,
@@ -44,11 +47,28 @@ class _HomeScreenState extends State<HomeScreen> {
     final rand = Random();
     Set<int> newNumbers = {};
     while (newNumbers.length != 3) {
-      newNumbers.add(rand.nextInt(1000));
+      newNumbers.add(rand.nextInt(maxnumber));
     }
     setState(() {
       randomNumbers = newNumbers.toList();
     });
+  }
+
+  void onSettingsPop() async {
+    final result = await Navigator.of(context).push<int>(
+      MaterialPageRoute(
+        builder: (BuildContext context) {
+          return const SettingsScreen();
+        },
+      ),
+    ); // 화면 이동 후 돌아오면서 결과값 받음 (async - await)
+    // int? 타입(null 가능성)이므로 null check 필요
+
+    if (result != null) {
+      setState(() {
+        maxnumber = result;
+      });
+    }
   }
 }
 
@@ -91,7 +111,9 @@ class _Body extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header();
+  final VoidCallback onPressed;
+
+  const _Header({required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -107,15 +129,7 @@ class _Header extends StatelessWidget {
           ),
         ),
         IconButton(
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (BuildContext context) {
-                  return const SettingsScreen();
-                },
-              ),
-            );
-          },
+          onPressed: onPressed,
           icon: const Icon(
             Icons.settings,
             color: RED_COLOR,

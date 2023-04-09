@@ -41,15 +41,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               Slider(
                   value: maxNumber,
-                  min: 10000,
-                  max: 1000000,
+                  min: 1000,
+                  max: 100000,
                   onChanged: (double val) {
                     setState(() {
                       maxNumber = val;
                     });
                   }),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context)
+                      .pop(maxNumber.toInt()); // 데이터 전달하면서 뒤로가기
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: RED_COLOR,
                 ),
