@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:random_number/component/number_row.dart';
 import 'package:random_number/constant/color.dart';
 import 'package:random_number/screen/setting_screen.dart';
 
@@ -12,7 +13,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int maxnumber = 100;
+  int maxnumber = 1000;
   List<int> randomNumbers = [
     123,
     456,
@@ -58,7 +59,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final result = await Navigator.of(context).push<int>(
       MaterialPageRoute(
         builder: (BuildContext context) {
-          return const SettingsScreen();
+          return SettingsScreen(
+            maxNumber: maxnumber,
+          );
         },
       ),
     ); // 화면 이동 후 돌아오면서 결과값 받음 (async - await)
@@ -90,18 +93,8 @@ class _Body extends StatelessWidget {
               .map(
                 (x) => Padding(
                   padding: EdgeInsets.only(bottom: x.key == 2 ? 0 : 16),
-                  child: Row(
-                    children: x.value
-                        .toString()
-                        .split('')
-                        .map(
-                          (e) => Image.asset(
-                            'asset/image/$e.png',
-                            height: 70,
-                            width: 50,
-                          ),
-                        )
-                        .toList(),
+                  child: NumberRow(
+                    maxNumber: x.value,
                   ),
                 ),
               )
