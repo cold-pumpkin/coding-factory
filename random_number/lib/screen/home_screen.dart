@@ -1,8 +1,21 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:random_number/constant/color.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  List<int> randomNumbers = [
+    123,
+    456,
+    789,
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +29,8 @@ class HomeScreen extends StatelessWidget {
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text(
+                children: [
+                  const Text(
                     '랜덤숫자 생성기',
                     style: TextStyle(
                       color: Colors.white,
@@ -26,8 +39,8 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    onPressed: null,
-                    icon: Icon(
+                    onPressed: () {},
+                    icon: const Icon(
                       Icons.settings,
                       color: RED_COLOR,
                     ),
@@ -37,11 +50,7 @@ class HomeScreen extends StatelessWidget {
               Expanded(
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      123,
-                      456,
-                      789,
-                    ]
+                    children: randomNumbers
                         .asMap()
                         .entries
                         .map(
@@ -71,7 +80,16 @@ class HomeScreen extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: RED_COLOR,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    final rand = Random();
+                    Set<int> newNumbers = {};
+                    while (newNumbers.length != 3) {
+                      newNumbers.add(rand.nextInt(1000));
+                    }
+                    setState(() {
+                      randomNumbers = newNumbers.toList();
+                    });
+                  },
                   child: const Text('생성하기!'),
                 ),
               ),
