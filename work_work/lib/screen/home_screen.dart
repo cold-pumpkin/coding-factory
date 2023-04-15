@@ -11,6 +11,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool isWorkCheckDone = false;
+  GoogleMapController? mapController;
 
   static const LatLng companyLatLng = LatLng(
     37.365667391806,
@@ -94,6 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ? withinDistanceCircle
                                 : notWithinDistanceCircle,
                         marker: marker,
+                        onMapCreated: onMapCreated,
                       ),
                       _WorkButton(
                         isWithinRange: isWithinRange,
@@ -143,6 +145,10 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  onMapCreated(GoogleMapController controller) {
+    mapController = controller; // 화면 UI 달라지지 않기 때문에 setState 할 필요 없음
+  }
+
   Future<String> checkPermission() async {
     // 위치 서비스 활성화 여부 확인
     final isLocationEnabled = await Geolocator.isLocationServiceEnabled();
@@ -176,6 +182,30 @@ class _HomeScreenState extends State<HomeScreen> {
           fontWeight: FontWeight.w700,
         ),
       ),
+      actions: [
+        IconButton(
+          onPressed: () async {
+            if (mapController == null) {
+              return;
+            }
+            final location = await Geolocator.getCurrentPosition(
+              forceAndroidLocationManager: true,
+              desiredAccuracy: LocationAccuracy.medium,
+            );
+
+            mapController!.animateCamera(
+              CameraUpdate.newLatLng(
+                LatLng(
+                  location.latitude,
+                  location.longitude,
+                ),
+              ),
+            );
+          },
+          icon: const Icon(Icons.my_location),
+          color: Colors.blue,
+        )
+      ],
     );
   }
 }
@@ -225,11 +255,13 @@ class _CustomGoogleMap extends StatelessWidget {
     required this.initialPosition,
     required this.circle,
     required this.marker,
+    required this.onMapCreated,
   });
 
   final CameraPosition initialPosition;
   final Circle circle;
   final Marker marker;
+  final MapCreatedCallback onMapCreated;
 
   @override
   Widget build(BuildContext context) {
@@ -242,6 +274,7 @@ class _CustomGoogleMap extends StatelessWidget {
         myLocationButtonEnabled: false,
         circles: {circle},
         markers: {marker},
+        onMapCreated: onMapCreated,
       ),
     );
   }
