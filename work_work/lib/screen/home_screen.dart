@@ -18,13 +18,29 @@ class _HomeScreenState extends State<HomeScreen> {
     target: companyLatLng,
     zoom: 15,
   );
-  static const double distance = 100;
+  static const double okDistance = 100;
   static final Circle withinDistanceCircle = Circle(
     circleId: const CircleId('withinDistanceCircle'),
     center: companyLatLng,
     fillColor: Colors.blue.withOpacity(0.5),
-    radius: distance,
+    radius: okDistance,
     strokeColor: Colors.blue,
+    strokeWidth: 1,
+  );
+  static final Circle notWithinDistanceCircle = Circle(
+    circleId: const CircleId('notWithinDistanceCircle'),
+    center: companyLatLng,
+    fillColor: Colors.red.withOpacity(0.5),
+    radius: okDistance,
+    strokeColor: Colors.red,
+    strokeWidth: 1,
+  );
+  static final Circle checkDoneCircle = Circle(
+    circleId: const CircleId('checkDoneCircle'),
+    center: companyLatLng,
+    fillColor: Colors.green.withOpacity(0.5),
+    radius: okDistance,
+    strokeColor: Colors.green,
     strokeWidth: 1,
   );
   static const Marker marker = Marker(
@@ -36,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: renderAppBar(),
-      body: FutureBuilder(
+      body: FutureBuilder<String>(
         future:
             checkPermission(), // future 함수의 connectionState가 변경될 떄 마다 builer 재실행
         builder: (context, snapshot) {
@@ -47,16 +63,38 @@ class _HomeScreenState extends State<HomeScreen> {
           }
 
           if (snapshot.data == '위치 권한이 허가되었습니다.') {
-            return Column(
-              children: [
-                _CustomGoogleMap(
-                  initialPosition: initialPosition,
-                  circle: withinDistanceCircle,
-                  marker: marker,
-                ),
-                const _WorkButton(),
-              ],
-            );
+            return StreamBuilder<Position>(
+                stream: Geolocator.getPositionStream(), // 포지션이 바뀔 때 마다 호출됨
+                builder: (context, snapshot) {
+                  bool isWithinRange = false;
+                  if (snapshot.hasData) {
+                    final start = snapshot.data!; // 현재 내 위치
+                    const end = companyLatLng; // 현재 회사 위치
+
+                    final distance = Geolocator.distanceBetween(
+                      start.latitude,
+                      start.longitude,
+                      end.latitude,
+                      end.longitude,
+                    );
+                    if (distance < okDistance) {
+                      isWithinRange = true;
+                    }
+                  }
+
+                  return Column(
+                    children: [
+                      _CustomGoogleMap(
+                        initialPosition: initialPosition,
+                        circle: isWithinRange
+                            ? withinDistanceCircle
+                            : notWithinDistanceCircle,
+                        marker: marker,
+                      ),
+                      const _WorkButton(),
+                    ],
+                  );
+                });
           }
           return Center(
             child: Text(snapshot.data!),
