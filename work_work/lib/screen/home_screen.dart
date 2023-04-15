@@ -10,6 +10,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool isWorkCheckDone = false;
+
   static const LatLng companyLatLng = LatLng(
     37.365667391806,
     127.10806048253,
@@ -86,12 +88,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       _CustomGoogleMap(
                         initialPosition: initialPosition,
-                        circle: isWithinRange
-                            ? withinDistanceCircle
-                            : notWithinDistanceCircle,
+                        circle: isWorkCheckDone
+                            ? checkDoneCircle
+                            : isWithinRange
+                                ? withinDistanceCircle
+                                : notWithinDistanceCircle,
                         marker: marker,
                       ),
-                      const _WorkButton(),
+                      _WorkButton(
+                        isWithinRange: isWithinRange,
+                        onPressed: onWorkButtonPressed,
+                        isWorkCheckDone: isWorkCheckDone,
+                      ),
                     ],
                   );
                 });
@@ -102,6 +110,37 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       ),
     );
+  }
+
+  onWorkButtonPressed() async {
+    final result = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('출근하기'),
+          content: const Text('출근을 하시겠습니까?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false); // pop(리턴값)
+              },
+              child: const Text('취소'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: const Text('출근하기'),
+            )
+          ],
+        );
+      },
+    );
+    if (result) {
+      setState(() {
+        isWorkCheckDone = true;
+      });
+    }
   }
 
   Future<String> checkPermission() async {
@@ -142,12 +181,41 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _WorkButton extends StatelessWidget {
-  const _WorkButton();
+  const _WorkButton({
+    required this.isWithinRange,
+    required this.onPressed,
+    required this.isWorkCheckDone,
+  });
+
+  final bool isWithinRange;
+  final VoidCallback onPressed;
+  final bool isWorkCheckDone;
 
   @override
   Widget build(BuildContext context) {
-    return const Expanded(
-      child: Text('출근'),
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.timelapse_outlined,
+            size: 50,
+            color: isWorkCheckDone
+                ? Colors.green
+                : isWithinRange
+                    ? Colors.blue
+                    : Colors.red,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          if (!isWorkCheckDone && isWithinRange)
+            TextButton(
+              onPressed: onPressed,
+              child: const Text('출근하기'),
+            )
+        ],
+      ),
     );
   }
 }
