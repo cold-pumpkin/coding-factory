@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
       onPressed: () {
         showModalBottomSheet(
           context: context,
-          isScrollControlled: true,
+          isScrollControlled: true, // 화면 중간 이상으로 bottom sheet가 올라올 수 있도록
           builder: (_) {
             return const ScheduleBottomSheet();
           },
