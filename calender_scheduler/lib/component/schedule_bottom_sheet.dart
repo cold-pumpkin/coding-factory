@@ -9,34 +9,42 @@ class ScheduleBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).viewInsets.bottom; // 키보드 올라오는 높이
 
-    return Container(
-      color: Colors.white,
-      height: MediaQuery.of(context).size.height / 2 + bottomInset,
-      child: Padding(
-        padding: EdgeInsets.only(bottom: bottomInset), // 키보드 높이만큼 패딩 주기
-        child: Padding(
-          padding: const EdgeInsets.only(
-            left: 8,
-            right: 8,
-            top: 16,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              _Time(),
-              SizedBox(
-                height: 16,
+    return GestureDetector(
+      onTap: () {
+        // bottom sheet를 탭하면 키보드가 닫히도록
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: SafeArea(
+        child: Container(
+          color: Colors.white,
+          height: MediaQuery.of(context).size.height / 2 + bottomInset,
+          child: Padding(
+            padding: EdgeInsets.only(bottom: bottomInset), // 키보드 높이만큼 패딩 주기
+            child: Padding(
+              padding: const EdgeInsets.only(
+                left: 8,
+                right: 8,
+                top: 16,
               ),
-              _Content(),
-              SizedBox(
-                height: 16,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  _Time(),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  _Content(),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  _ColorPicker(),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  _SaveButton(),
+                ],
               ),
-              _ColorPicker(),
-              SizedBox(
-                height: 8,
-              ),
-              _SaveButton(),
-            ],
+            ),
           ),
         ),
       ),
@@ -49,8 +57,11 @@ class _Content extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const CustomTextField(
-      label: '내용',
+    return const Expanded(
+      child: CustomTextField(
+        label: '내용',
+        isTime: false,
+      ),
     );
   }
 }
@@ -65,6 +76,7 @@ class _Time extends StatelessWidget {
         Expanded(
           child: CustomTextField(
             label: '시작시간',
+            isTime: true,
           ),
         ),
         SizedBox(
@@ -73,6 +85,7 @@ class _Time extends StatelessWidget {
         Expanded(
           child: CustomTextField(
             label: '마감시간',
+            isTime: true,
           ),
         ),
       ],
