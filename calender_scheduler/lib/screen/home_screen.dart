@@ -1,4 +1,6 @@
 import 'package:calender_scheduler/component/calender.dart';
+import 'package:calender_scheduler/component/schedule_bottom_sheet.dart';
+import 'package:calender_scheduler/const/colors.dart';
 import 'package:flutter/material.dart';
 
 import '../component/schedule_card.dart';
@@ -22,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: renderFloatingActionButton(),
       body: SafeArea(
         child: Column(
           children: [
@@ -40,29 +43,27 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(
               height: 8,
             ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: ListView.separated(
-                  itemCount: 20,
-                  separatorBuilder: (context, index) {
-                    return const SizedBox(
-                      height: 8,
-                    );
-                  },
-                  itemBuilder: (context, index) {
-                    return const ScheduleCard(
-                      startTime: 8,
-                      endTime: 9,
-                      content: 'Flutter 공부',
-                      color: Colors.red,
-                    );
-                  },
-                ),
-              ),
-            ),
+            const _ScheduleList(),
           ],
         ),
+      ),
+    );
+  }
+
+  FloatingActionButton renderFloatingActionButton() {
+    return FloatingActionButton(
+      onPressed: () {
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          builder: (_) {
+            return const ScheduleBottomSheet();
+          },
+        );
+      },
+      backgroundColor: PRIMARY_COLOR,
+      child: const Icon(
+        Icons.add,
       ),
     );
   }
@@ -72,5 +73,34 @@ class _HomeScreenState extends State<HomeScreen> {
       this.selectedDay = selectedDay;
       this.focusedDay = selectedDay;
     });
+  }
+}
+
+class _ScheduleList extends StatelessWidget {
+  const _ScheduleList();
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: ListView.separated(
+          itemCount: 20,
+          separatorBuilder: (context, index) {
+            return const SizedBox(
+              height: 8,
+            );
+          },
+          itemBuilder: (context, index) {
+            return const ScheduleCard(
+              startTime: 8,
+              endTime: 9,
+              content: 'Flutter 공부',
+              color: Colors.red,
+            );
+          },
+        ),
+      ),
+    );
   }
 }
