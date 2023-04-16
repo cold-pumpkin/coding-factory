@@ -1,4 +1,5 @@
 import 'package:calender_scheduler/component/calender.dart';
+import 'package:calender_scheduler/component/schedule_card.dart';
 import 'package:flutter/material.dart';
 
 import '../component/today_banner.dart';
@@ -35,6 +36,18 @@ class _HomeScreenState extends State<HomeScreen> {
             TodayBanner(
               selectedDay: selectedDay,
               scheduleCount: 10,
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8),
+              child: ScheduleCard(
+                startTime: 8,
+                endTime: 9,
+                content: 'Flutter 공부',
+                color: Colors.red,
+              ),
             ),
           ],
         ),
