@@ -2,16 +2,17 @@ import 'package:calender_scheduler/const/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class Calender extends StatefulWidget {
-  const Calender({super.key});
+class Calender extends StatelessWidget {
+  const Calender({
+    super.key,
+    this.selectedDay,
+    required this.focusedDay,
+    required this.onDaySelected,
+  });
 
-  @override
-  State<Calender> createState() => _CalenderState();
-}
-
-class _CalenderState extends State<Calender> {
-  DateTime? selectedDay;
-  DateTime focusedDay = DateTime.now();
+  final DateTime? selectedDay;
+  final DateTime focusedDay;
+  final OnDaySelected onDaySelected;
 
   @override
   Widget build(BuildContext context) {
@@ -59,12 +60,7 @@ class _CalenderState extends State<Calender> {
           color: PRIMARY_COLOR,
         ),
       ),
-      onDaySelected: (DateTime selectedDay, DateTime focusedDay) {
-        setState(() {
-          this.selectedDay = selectedDay;
-          this.focusedDay = selectedDay;
-        });
-      },
+      onDaySelected: onDaySelected,
       selectedDayPredicate: (DateTime date) {
         // 선택한 날짜를 인식하여 선택 시 표시되도록
         if (selectedDay == null) {
