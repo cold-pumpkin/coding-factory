@@ -21,6 +21,6 @@ class Schedules extends Table {
 
   // 생성날짜
   DateTimeColumn get createdAt => dateTime().clientDefault(
-        () => DateTime.now(),
+        () => DateTime.now(), // 기본값 지정
       )();
 }
