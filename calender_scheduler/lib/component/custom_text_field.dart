@@ -27,8 +27,14 @@ class CustomTextField extends StatelessWidget {
     );
   }
 
-  TextField renderTextField() {
-    return TextField(
+  TextFormField renderTextField() {
+    return TextFormField(
+      validator: (String? val) {
+        if (val == null || val.isEmpty) {
+          return '값을 입력해주세요';
+        }
+        return null;
+      },
       cursorColor: Colors.grey,
       keyboardType: isTime ? TextInputType.number : TextInputType.multiline,
       maxLines: isTime ? 1 : null,
