@@ -18,6 +18,18 @@ part 'drift_database.g.dart';
 )
 class LocalDatabase extends _$LocalDatabase {
   LocalDatabase() : super(_openConnection());
+
+  Future<int> createSchedule(SchedulesCompanion data) =>
+      into(schedules).insert(data);
+
+  Future<int> createCategoryColor(CategoryColorsCompanion data) =>
+      into(categoryColors).insert(data);
+
+  Future<List<CategoryColor>> getCategoryColors() =>
+      select(categoryColors).get();
+
+  @override
+  int get schemaVersion => 1;
 }
 
 LazyDatabase _openConnection() {
@@ -25,7 +37,7 @@ LazyDatabase _openConnection() {
     // path_provider 를 통해 앱의 저장위치 가져오기
     final dbFolder = await getApplicationDocumentsDirectory();
 
-    // 테이블 정보 담을 파일
+    // 테이블 정보 담을 파일 생성
     final file = File(p.join(dbFolder.path, 'db.splite'));
 
     return NativeDatabase(file);
