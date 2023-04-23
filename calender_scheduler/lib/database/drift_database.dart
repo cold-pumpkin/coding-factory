@@ -28,6 +28,9 @@ class LocalDatabase extends _$LocalDatabase {
   Future<List<CategoryColor>> getCategoryColors() =>
       select(categoryColors).get();
 
+  // 스케쥴이 반영되면 조회 목록에도 반영되도록
+  Stream<List<Schedule>> watchSchedules() => select(schedules).watch();
+
   @override
   int get schemaVersion => 1;
 }
