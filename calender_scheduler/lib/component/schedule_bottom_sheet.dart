@@ -17,6 +17,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
   int? startTime;
   int? endTime;
   String? content;
+  int? selectedColorId;
 
   @override
   Widget build(BuildContext context) {
@@ -69,14 +70,22 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                       future:
                           GetIt.I<LocalDatabase>().getCategoryColors(), // DI
                       builder: (context, snapshot) {
+                        if (snapshot.hasData &&
+                            selectedColorId == null &&
+                            snapshot.data!.isNotEmpty) {
+                          // 첫번째 색깔을 디폴트로 선택
+                          selectedColorId = snapshot.data![0].id;
+                        }
                         return _ColorPicker(
-                            colors: snapshot.hasData
-                                ? snapshot.data!
-                                    .map((e) => Color(int.parse(
-                                        'FF${e.hexCode}',
-                                        radix: 16))) // 16진수로 변경
-                                    .toList()
-                                : []);
+                          colors: snapshot.hasData ? snapshot.data! : [],
+                          selectedColorId: selectedColorId!,
+                          colorIdSetter: (int id) {
+                            setState(() {
+                              // 선택된 color의 id
+                              selectedColorId = id;
+                            });
+                          },
+                        );
                       },
                     ),
                     const SizedBox(
@@ -165,12 +174,18 @@ class _Time extends StatelessWidget {
   }
 }
 
+typedef ColorIdSetter = Function(int id);
+
 class _ColorPicker extends StatelessWidget {
   const _ColorPicker({
     required this.colors,
+    required this.selectedColorId,
+    required this.colorIdSetter,
   });
 
-  final List<Color> colors;
+  final List<CategoryColor> colors;
+  final int selectedColorId;
+  final ColorIdSetter colorIdSetter;
 
   @override
   Widget build(BuildContext context) {
@@ -178,16 +193,27 @@ class _ColorPicker extends StatelessWidget {
       // 줄바꿈 자동으로 되도록 Row 대신 Wrap
       spacing: 8, // 좌우 간격
       runSpacing: 10, // 상하 간격
-      children: colors.map((e) => renderColor(e)).toList(),
+      children: colors
+          .map((e) => GestureDetector(
+              onTap: () {
+                colorIdSetter(e.id);
+              },
+              child: renderColor(e, selectedColorId == e.id)))
+          .toList(),
     );
   }
 
-  Widget renderColor(Color color) {
+  Widget renderColor(CategoryColor color, bool isSelected) {
     return Container(
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: color,
-      ),
+          shape: BoxShape.circle,
+          color: Color(int.parse('FF${color.hexCode}', radix: 16)),
+          border: isSelected
+              ? Border.all(
+                  color: Colors.black,
+                  width: 4,
+                )
+              : null),
       width: 32,
       height: 32,
     );
