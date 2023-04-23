@@ -33,7 +33,9 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                 top: 16,
               ),
               child: Form(
+                // 모든 TextFormField 일괄적으로 관리하기
                 key: formKey,
+                autovalidateMode: AutovalidateMode.always,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
