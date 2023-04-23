@@ -1,11 +1,18 @@
 import "package:calender_scheduler/component/custom_text_field.dart";
 import "package:calender_scheduler/const/colors.dart";
 import "package:calender_scheduler/database/drift_database.dart";
+import "package:drift/drift.dart"
+    show Value; // Column이 겹치기 때문에 Value 만 drift 패키지에서 가져옴
 import "package:flutter/material.dart";
 import "package:get_it/get_it.dart";
 
 class ScheduleBottomSheet extends StatefulWidget {
-  const ScheduleBottomSheet({super.key});
+  const ScheduleBottomSheet({
+    super.key,
+    required this.selectedDate,
+  });
+
+  final DateTime selectedDate;
 
   @override
   State<ScheduleBottomSheet> createState() => _ScheduleBottomSheetState();
@@ -78,10 +85,10 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                         }
                         return _ColorPicker(
                           colors: snapshot.hasData ? snapshot.data! : [],
-                          selectedColorId: selectedColorId!,
+                          selectedColorId: selectedColorId,
                           colorIdSetter: (int id) {
                             setState(() {
-                              // 선택된 color의 id
+                              // 선택된 color의 id로 셋팅
                               selectedColorId = id;
                             });
                           },
@@ -104,7 +111,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
     );
   }
 
-  void onSavePressed() {
+  void onSavePressed() async {
     // formKey는 생성했지만 아직 Form 위젯과 결합하지 않는 경우 (실제 발생은 안함)
     if (formKey.currentState == null) {
       return;
@@ -112,8 +119,20 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
 
     if (formKey.currentState!.validate()) {
       // 모든 TextFormField에서 null이 리턴 (에러 없음)
-      print('에러가 없습니다');
       formKey.currentState!.save(); // 각 CustomTextField의 onSaved 모두 실행
+
+      final key = await GetIt.I<LocalDatabase>().createSchedule(
+        SchedulesCompanion(
+          date: Value(widget.selectedDate),
+          startTime: Value(startTime!),
+          endTime: Value(endTime!),
+          content: Value(content!),
+          colorId: Value(selectedColorId!),
+        ),
+      );
+
+      if (!mounted) return;
+      Navigator.of(context).pop();
     } else {
       print('에러가 있습니다');
     }
@@ -184,7 +203,7 @@ class _ColorPicker extends StatelessWidget {
   });
 
   final List<CategoryColor> colors;
-  final int selectedColorId;
+  final int? selectedColorId;
   final ColorIdSetter colorIdSetter;
 
   @override

@@ -57,7 +57,9 @@ class _HomeScreenState extends State<HomeScreen> {
           context: context,
           isScrollControlled: true, // 화면 중간 이상으로 bottom sheet가 올라올 수 있도록
           builder: (_) {
-            return const ScheduleBottomSheet();
+            return ScheduleBottomSheet(
+              selectedDate: selectedDay,
+            );
           },
         );
       },
