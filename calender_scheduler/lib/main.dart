@@ -2,6 +2,7 @@ import 'package:calender_scheduler/database/drift_database.dart';
 import 'package:calender_scheduler/screen/home_screen.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 const DEFAULT_COLORS = [
@@ -18,6 +19,10 @@ void main() async {
   await initializeDateFormatting();
 
   final database = LocalDatabase();
+
+  // DI를 위한 준비
+  GetIt.I.registerSingleton<LocalDatabase>(database);
+
   final colors = await database.getCategoryColors();
 
   if (colors.isEmpty) {

@@ -1,6 +1,8 @@
 import "package:calender_scheduler/component/custom_text_field.dart";
 import "package:calender_scheduler/const/colors.dart";
+import "package:calender_scheduler/database/drift_database.dart";
 import "package:flutter/material.dart";
+import "package:get_it/get_it.dart";
 
 class ScheduleBottomSheet extends StatefulWidget {
   const ScheduleBottomSheet({super.key});
@@ -63,7 +65,20 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                     const SizedBox(
                       height: 16,
                     ),
-                    const _ColorPicker(),
+                    FutureBuilder<List<CategoryColor>>(
+                      future:
+                          GetIt.I<LocalDatabase>().getCategoryColors(), // DI
+                      builder: (context, snapshot) {
+                        return _ColorPicker(
+                            colors: snapshot.hasData
+                                ? snapshot.data!
+                                    .map((e) => Color(int.parse(
+                                        'FF${e.hexCode}',
+                                        radix: 16))) // 16진수로 변경
+                                    .toList()
+                                : []);
+                      },
+                    ),
                     const SizedBox(
                       height: 8,
                     ),
@@ -151,7 +166,11 @@ class _Time extends StatelessWidget {
 }
 
 class _ColorPicker extends StatelessWidget {
-  const _ColorPicker();
+  const _ColorPicker({
+    required this.colors,
+  });
+
+  final List<Color> colors;
 
   @override
   Widget build(BuildContext context) {
@@ -159,15 +178,7 @@ class _ColorPicker extends StatelessWidget {
       // 줄바꿈 자동으로 되도록 Row 대신 Wrap
       spacing: 8, // 좌우 간격
       runSpacing: 10, // 상하 간격
-      children: [
-        renderColor(Colors.red),
-        renderColor(Colors.orange),
-        renderColor(Colors.yellow),
-        renderColor(Colors.green),
-        renderColor(Colors.blue),
-        renderColor(Colors.indigo),
-        renderColor(Colors.purple),
-      ],
+      children: colors.map((e) => renderColor(e)).toList(),
     );
   }
 
