@@ -7,10 +7,12 @@ class CustomTextField extends StatelessWidget {
     super.key,
     required this.label,
     required this.isTime,
+    required this.onSaved,
   });
 
   final String label;
   final bool isTime;
+  final FormFieldSetter<String> onSaved;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +31,7 @@ class CustomTextField extends StatelessWidget {
 
   TextFormField renderTextField() {
     return TextFormField(
+      onSaved: onSaved,
       validator: (String? val) {
         if (val == null || val.isEmpty) {
           return '값을 입력해주세요';
