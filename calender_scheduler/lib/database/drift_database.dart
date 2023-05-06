@@ -38,6 +38,11 @@ class LocalDatabase extends _$LocalDatabase {
       innerJoin(categoryColors, categoryColors.id.equalsExp(schedules.colorId))
     ]);
     query.where(schedules.date.equals(date)); // 어떤 테이블에 조건을 걸지 명시
+    query.orderBy([
+      OrderingTerm.asc(
+        schedules.startTime,
+      )
+    ]);
     return query.watch().map(
           (rows) => rows
               .map(
