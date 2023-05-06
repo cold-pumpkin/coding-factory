@@ -29,7 +29,15 @@ class LocalDatabase extends _$LocalDatabase {
       select(categoryColors).get();
 
   // 스케쥴이 반영되면 조회 목록에도 반영되도록
-  Stream<List<Schedule>> watchSchedules() => select(schedules).watch();
+  Stream<List<Schedule>> watchSchedules(DateTime date) =>
+      (select(schedules)..where((tbl) => tbl.date.equals(date))).watch();
+  // .. : where 가 적용은 되지만, 그 대상이 그대로 리턴됨
+
+  /*
+    final query = select(schedules);
+    query.where((tbl) => tbl.date.equals(date));
+    return query.watch();
+    */
 
   @override
   int get schemaVersion => 1;
