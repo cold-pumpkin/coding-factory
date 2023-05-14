@@ -8,11 +8,13 @@ class CustomTextField extends StatelessWidget {
     required this.label,
     required this.isTime,
     required this.onSaved,
+    required this.initialValue,
   });
 
   final String label;
   final bool isTime;
   final FormFieldSetter<String> onSaved;
+  final String initialValue;
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +55,7 @@ class CustomTextField extends StatelessWidget {
       maxLines: isTime ? 1 : null,
       maxLength: 500,
       expands: !isTime, // 최대한 늘리기
+      initialValue: initialValue,
       inputFormatters: isTime
           ? [
               FilteringTextInputFormatter.digitsOnly, // 숫자만 입력 가능

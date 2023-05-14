@@ -120,20 +120,36 @@ class _ScheduleList extends StatelessWidget {
                     key: ObjectKey(scheduleWithColor.schedule.id),
                     direction: DismissDirection.endToStart, // 스와이프 방향
                     onDismissed: (DismissDirection direction) {
-                      GetIt.I<LocalDatabase>().removeSchedule(scheduleWithColor.schedule.id);
+                      GetIt.I<LocalDatabase>()
+                          .removeSchedule(scheduleWithColor.schedule.id);
                     },
-                    child: ScheduleCard(
-                      startTime: scheduleWithColor.schedule.startTime,
-                      endTime: scheduleWithColor.schedule.endTime,
-                      content: scheduleWithColor.schedule.content,
-                      color: Color(
-                        int.parse(
-                          'FF${scheduleWithColor.categoryColor.hexCode}',
-                          radix: 16,
+                    child: GestureDetector(
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled:
+                              true, // 화면 중간 이상으로 bottom sheet가 올라올 수 있도록
+                          builder: (_) {
+                            return ScheduleBottomSheet(
+                              selectedDate: selectedDay,
+                              scheduleId: scheduleWithColor.schedule.id,
+                            );
+                          },
+                        );
+                      },
+                      child: ScheduleCard(
+                        startTime: scheduleWithColor.schedule.startTime,
+                        endTime: scheduleWithColor.schedule.endTime,
+                        content: scheduleWithColor.schedule.content,
+                        color: Color(
+                          int.parse(
+                            'FF${scheduleWithColor.categoryColor.hexCode}',
+                            radix: 16,
+                          ),
                         ),
                       ),
                     ),
-                  )
+                  );
                 },
               );
             }),
