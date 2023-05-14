@@ -29,6 +29,9 @@ class LocalDatabase extends _$LocalDatabase {
   Future<List<CategoryColor>> getCategoryColors() =>
       select(categoryColors).get();
 
+  removeSchedule(int id) =>
+      (delete(schedules)..where((tbl) => tbl.id.equals(id))).go();
+
   // 스케쥴이 반영되면 조회 목록에도 반영되도록
   Stream<List<ScheduleWithColor>> watchSchedules(DateTime date) {
     //=> (select(schedules)..where((tbl) => tbl.date.equals(date))).watch();
