@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:vid_player/component/custome_video_player.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -9,7 +10,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  XFile? video;
+  XFile? video; // ImagePicker에서 사용하는 타입
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +20,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget renderVideo() {
-    return const Center(
-      child: Text('Video'),
+    return Center(
+      child: CustomVideoPlayer(
+        video: video!,
+      ),
     );
   }
 
